@@ -1,0 +1,53 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset="utf-8"/>
+		<title>webSocket client</title>
+		<script type="text/javascript">
+			var socket;
+			if(!window.WebSocket){
+				window.WebSocket = window.MozWebSocket;
+			}
+			if(window.WebSocket){
+				socket = new WebSocket("ws://localhost:8888/websocket");
+				socket.onmessage=function(event){
+					var ta = document.getElementById('responseContent');
+					ta.value+=event.data +"\r\n";
+				};
+				socket.onopen = function(event){
+					var ta = document.getElementById('responseContent');
+					ta.value+="your web browser support WebSocket, please continue to operate.."+"\r\n";
+				};
+				socket.onclose = function(event){
+					
+					var ta = document.getElementById('responseContent');
+					ta.value+="WebSocket has been closed.."+"\r\n";
+				};
+			}else{
+				alert("your browser don't support websocket");
+			}
+			function send(msg){
+				alert('msg:'+msg);
+				if(!window.WebSocket){
+					return;
+				}
+				if(socket.readyState == WebSocket.OPEN){
+					socket.send(msg);
+				}else{
+					alert("WebSocket connection haven't been established." );
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<form onSubmit="return false;">
+			<input type="text" name="msg" value=""/>
+			<br/><br/>
+			<input type="button" value="send websocket" onClick="send(this.form.msg.value)"/>
+			
+			<hr color="red"/>
+			<h2>response from server</h2>
+			<textarea id="responseContent" style="width:1024px,height:300px">
+			</textarea>
+		</form>
+	</body>
+</html>
